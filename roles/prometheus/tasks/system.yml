@@ -1,0 +1,33 @@
+---
+- name: Install system packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - curl
+    - wget
+    - systemd
+    - docker-compose
+  become: true
+
+- name: Create prometheus user
+  ansible.builtin.user:
+    name: "{{ prometheus_user }}"
+    system: true
+    shell: /bin/false
+    home: "{{ prometheus_data_dir }}"
+    createhome: false
+  register: prometheus_user_info
+  become: true
+
+- name: Create prometheus directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: '0755'
+  loop:
+    - "{{ prometheus_config_dir }}"
+    - "{{ prometheus_data_dir }}"
+  become: true
