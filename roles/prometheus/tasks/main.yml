@@ -1,0 +1,8 @@
+---
+- name: Include system setup tasks
+  ansible.builtin.include_tasks: system.yml
+  tags: [system]
+
+- name: Include prometheus tasks
+  ansible.builtin.include_tasks: prometheus.yml
+  tags: [prometheus]
