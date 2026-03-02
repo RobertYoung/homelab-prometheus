@@ -42,6 +42,8 @@
       vars:
         step_ca_client_provisioner_password: "{{ lookup('amazon.aws.aws_ssm', '/home-server/step-ca-ansible-password') }}"
         step_ca_client_cert_not_after: "168h" # 7 days
+        step_ca_client_post_renew_commands:
+          - "docker kill --signal=HUP traefik || echo 'Traefik not running, skipping HUP signal'"
 
     - role: syslog
       tags: [syslog]

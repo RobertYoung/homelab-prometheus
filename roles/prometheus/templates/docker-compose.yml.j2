@@ -1,12 +1,21 @@
 version: '3.8'
 
 services:
+  traefik:
+    image: traefik:v3.6
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "{{ prometheus_service_port }}:443"
+    volumes:
+      - {{ prometheus_traefik_config_dir }}/traefik.yml:/etc/traefik/traefik.yml:ro
+      - {{ prometheus_traefik_config_dir }}/dynamic:/etc/traefik/dynamic:ro
+      - {{ prometheus_config_dir }}/certs:/certs:ro
+
   prometheus:
     image: prom/prometheus:{{ prometheus_version }}
     container_name: {{ prometheus_service_name }}
     restart: unless-stopped
-    ports:
-      - "{{ prometheus_port }}:9090"
     volumes:
       - {{ prometheus_data_dir }}:/prometheus
       - {{ prometheus_config_dir }}/prometheus.yml:/etc/prometheus/prometheus.yml:ro

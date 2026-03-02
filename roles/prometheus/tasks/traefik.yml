@@ -1,0 +1,48 @@
+---
+- name: Create traefik config directory
+  ansible.builtin.file:
+    path: "{{ prometheus_traefik_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Create traefik dynamic config directory
+  ansible.builtin.file:
+    path: "{{ prometheus_traefik_config_dir }}/dynamic"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Deploy traefik static config
+  ansible.builtin.template:
+    src: traefik/traefik.yml.j2
+    dest: "{{ prometheus_traefik_config_dir }}/traefik.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: Restart prometheus
+
+- name: Deploy traefik TLS dynamic config
+  ansible.builtin.template:
+    src: traefik/dynamic/tls.yml.j2
+    dest: "{{ prometheus_traefik_config_dir }}/dynamic/tls.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: Restart prometheus
+
+- name: Deploy traefik services dynamic config
+  ansible.builtin.template:
+    src: traefik/dynamic/services.yml.j2
+    dest: "{{ prometheus_traefik_config_dir }}/dynamic/services.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: Restart prometheus
