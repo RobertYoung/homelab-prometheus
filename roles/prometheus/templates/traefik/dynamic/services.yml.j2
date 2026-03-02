@@ -1,0 +1,14 @@
+http:
+  routers:
+    prometheus:
+      rule: "Host(`{{ prometheus_service_domain }}`)"
+      entryPoints:
+        - websecure
+      tls: {}
+      service: prometheus
+
+  services:
+    prometheus:
+      loadBalancer:
+        servers:
+          - url: "http://prometheus:9090"

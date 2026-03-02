@@ -26,8 +26,39 @@
     state: directory
     owner: "{{ prometheus_user }}"
     group: "{{ prometheus_user }}"
-    mode: '0755'
+    mode: "0755"
   loop:
     - "{{ prometheus_config_dir }}"
     - "{{ prometheus_data_dir }}"
   become: true
+
+- name: Create prometheus certs directory
+  ansible.builtin.file:
+    path: "{{ prometheus_config_dir }}/certs"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Copy TLS certificate for prometheus
+  ansible.builtin.copy:
+    src: "/etc/ssl/certs/{{ prometheus_service_domain }}.crt"
+    dest: "{{ prometheus_config_dir }}/certs/{{ prometheus_service_domain }}.crt"
+    owner: root
+    group: root
+    mode: "0644"
+    remote_src: true
+  become: true
+  notify: Restart prometheus
+
+- name: Copy TLS private key for prometheus
+  ansible.builtin.copy:
+    src: "/etc/ssl/private/{{ prometheus_service_domain }}.pem"
+    dest: "{{ prometheus_config_dir }}/certs/{{ prometheus_service_domain }}.pem"
+    owner: root
+    group: root
+    mode: "0640"
+    remote_src: true
+  become: true
+  notify: Restart prometheus

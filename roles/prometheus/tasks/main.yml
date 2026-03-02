@@ -1,8 +1,21 @@
 ---
 - name: Include system setup tasks
-  ansible.builtin.include_tasks: system.yml
-  tags: [system]
+  ansible.builtin.include_tasks:
+    file: system.yml
+    apply:
+      tags: [system]
+  tags: [always]
+
+- name: Setup traefik
+  ansible.builtin.include_tasks:
+    file: traefik.yml
+    apply:
+      tags: [traefik]
+  tags: [always]
 
 - name: Include prometheus tasks
-  ansible.builtin.include_tasks: prometheus.yml
-  tags: [prometheus]
+  ansible.builtin.include_tasks:
+    file: prometheus.yml
+    apply:
+      tags: [prometheus]
+  tags: [always]
