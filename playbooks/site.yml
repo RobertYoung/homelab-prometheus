@@ -34,13 +34,13 @@
         telegraf_influxdb_url: "https://influxdb.{{ domain }}"
         telegraf_influxdb_port: 8086
         telegraf_influxdb_organisation: "0dd8df669872ba9e"
-        telegraf_influxdb_token: "{{ lookup('amazon.aws.aws_ssm', '/home-server/influxdb-token') }}"
+        telegraf_influxdb_token: "{{ lookup('amazon.aws.aws_ssm', '/homelab/influxdb/token', region='eu-west-1') }}"
         telegraf_influxdb_bucket: "home-server"
 
     - role: step-ca-client
       tags: [step-ca-client]
       vars:
-        step_ca_client_provisioner_password: "{{ lookup('amazon.aws.aws_ssm', '/home-server/step-ca-ansible-password') }}"
+        step_ca_client_provisioner_password: "{{ lookup('amazon.aws.aws_ssm', '/homelab/step-ca/ansible-password', region='eu-west-1') }}"
         step_ca_client_cert_not_after: "168h" # 7 days
         step_ca_client_post_renew_commands:
           - "docker kill --signal=HUP traefik || echo 'Traefik not running, skipping HUP signal'"
@@ -57,8 +57,8 @@
       tags: [certbot]
       vars:
         certbot_domain: "{{ fqdn }}"
-        certbot_aws_access_key: "{{ lookup('amazon.aws.aws_ssm', '/home-server/certbot-access-key') }}"
-        certbot_aws_secret_access_key: "{{ lookup('amazon.aws.aws_ssm', '/home-server/certbot-secret-access-key') }}"
+        certbot_aws_access_key: "{{ lookup('amazon.aws.aws_ssm', '/homelab/certbot/access-key', region='eu-west-1') }}"
+        certbot_aws_secret_access_key: "{{ lookup('amazon.aws.aws_ssm', '/homelab/certbot/secret-access-key', region='eu-west-1') }}"
 
     - role: prometheus
       tags: [prometheus]
